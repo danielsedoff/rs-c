@@ -7,8 +7,8 @@ void help(void);
 
 int main(int argc, char *argv[]){
 
- char c, cc, *filename, *tx;
- unsigned long min_word, fsize, txLen, ctr, currChar, copyCh, wrd, longestWd;
+ char c, cc, *filename, *textContent;
+ unsigned long minimumWordLength, fsize, textContenttLength, counter, currentChar, copyPosition, wordSize, longestWord;
  double progressPc;
  
  if(argc < 2 || argc > 3){
@@ -17,10 +17,10 @@ int main(int argc, char *argv[]){
  }
 
  if(argc == 3) { 
-  min_word = (int) strtol(argv[2], NULL, 0);
+  minimumWordLength = (int) strtol(argv[2], NULL, 0);
  }
  
- if(min_word == 0L) min_word = 1; // default
+ if(minimumWordLength == 0L) minimumWordLength = 1; // default
  
  filename = argv[1];
  if(access(filename, F_OK) == -1) {
@@ -34,64 +34,63 @@ int main(int argc, char *argv[]){
  fsize = ftell(f);
  fseek(f, 0, SEEK_SET);
  c = '0';
- tx = (char*)malloc(fsize + 1); 
+ textContent = (char*)malloc(fsize + 1);
 
- if(tx == NULL) {
-  printf("Sorry, cannot allocate %ld bytes of memory.\n", fsize + 1);
+ if(textContent == NULL) {
+  printf("Error: cannot allocate %ld bytes of memory.\n", fsize + 1);
   return 0;
  }
  
- fread(tx, fsize, 1, f);
+ fread(textContent, fsize, 1, f);
  fclose(f);
- tx[fsize] = 0;
- txLen = strlen(tx);
- printf("\nThe file <%s> is %ld bytes long.\n", filename, txLen);
+ textContent[fsize] = 0;
+ textContenttLength = strlen(textContent);
+ printf("\nThe file <%s> is %ld bytes long.\n", filename, textContenttLength);
  printf("If it takes too long, try to change the MINLENGTH parameter.\n");
  
- 
- if(txLen < 2) {
+ if(textContenttLength < 2) {
   return 0;
  }
  
  
- for(currChar = 0; currChar < txLen - 1; ++currChar) {
-  progressPc = 100. * (double)currChar / (double)txLen;
-  c = tx[currChar];
-  longestWd = 0;
-  for(copyCh = currChar + 1; copyCh < txLen; ++copyCh) {
-   if(c == tx[copyCh]){
-    wrd = 1;
-    while(currChar + wrd < copyCh && copyCh + wrd < txLen && tx[currChar+wrd]==tx[copyCh+wrd]){
-     ++wrd;
+ for(currentChar = 0; currentChar < textContenttLength - 1; ++currentChar) {
+  progressPc = 100. * (double)currentChar / (double)textContenttLength;
+  c = textContent[currentChar];
+  longestWord = 0;
+  for(copyPosition = currentChar + 1; copyPosition < textContenttLength; ++copyPosition) {
+   if(c == textContent[copyPosition]){
+    wordSize = 1;
+    while(currentChar + wordSize < copyPosition && copyPosition + wordSize < textContenttLength && textContent[currentChar + wordSize] == textContent[copyPosition + wordSize]){
+     ++wordSize;
     }
-    if (wrd > longestWd) longestWd = wrd;
+    if (wordSize > longestWord) longestWord = wordSize;
    }
   }
-  if(longestWd > 1){
-   if(longestWd >= min_word) {
+  if(longestWord > 1){
+   if(longestWord >= minimumWordLength) {
     printf("\n%.2f%% - ", progressPc);
-    if (currChar == 0) {
-		ctr = 0; 
-		--longestWd;
+    if (currentChar == 0) {
+		counter = 0; 
+		--longestWord;
 	} else {
-		ctr = currChar - 1;
+		counter = currentChar - 1;
 	}
-    for(; ctr < currChar + longestWd && ctr < txLen; ++ctr) {
-	 cc = tx[ctr];
+    for(; counter < currentChar + longestWord && counter < textContenttLength; ++counter) {
+	 cc = textContent[counter];
 	 if(cc == '\n' || cc == '\t') cc = ' ';
 	 printf("%c", cc);
     }
    }
-   currChar += longestWd;
+   currentChar += longestWord;
   }
  }
  return 0;
 }
 
 void help(){
-  printf("\nrs: find repeated strings in fileand output to stdout. \n");
-  printf("USAGE: rs FILE [MINLENGTH]\n\n");
-  printf("FILE should be a plain text file no greater than your RAM size.\n");
-  printf("[MINLENGTH] is the minimum repeated sequence length.\n");
-  printf("Author contact: Daniel Sedoff <danielsedoff@gmail.com>\n\n");
+  printf("\nrs: find repeated strings in file and output to stdout. \n");
+  printf("Usage:     rs FILE [MINLENGTH]\n\n");
+  printf("FILE:      a plain text file no greater than your RAM size.\n");
+  printf("MINLENGTH: minimum repeated sequence length.\n");
+  printf("Contact:   Daniel Sedoff <danielsedoff@gmail.com>\n\n");
 }
