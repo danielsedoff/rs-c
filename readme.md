@@ -1,4 +1,4 @@
-#rs
+# rs
 
 This is a Repeated Substring search utility.
 
